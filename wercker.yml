@@ -1,0 +1,18 @@
+build:
+  box: projectatomic/dockerfile-lint
+  steps:
+    - script:
+        name: dockerfile linter
+        code: |
+          dockerfile_lint -f Dockerfile
+deploy:
+  box: 
+    id: appropriate/curl
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: trigger docker hub build
+        code: |
+          curl -H "Content-Type: application/json" \
+               --data '${DOCKER_HUB_TRIGGER_DATA}' \
+               -X POST https://registry.hub.docker.com/u/raizyr/hugo-deploy/trigger/${DOCKER_HUB_TRIGGER_TOKEN}/
